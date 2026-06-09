@@ -3,3 +3,4 @@ EXTRACT_ALL            = YES
 GENERATE_TAGFILE       = my_lib.tag
 GENERATE_LATEX         = NO
 GENERATE_HTML          = NO
+CASE_SENSE_NAMES = YES
