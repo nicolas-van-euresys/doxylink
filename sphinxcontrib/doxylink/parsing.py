@@ -37,7 +37,7 @@ square_bracket_pair = LBRACK + SkipTo(RBRACK) + RBRACK
 curly_bracket_pair = LCBRACK + SkipTo(RCBRACK) + RCBRACK
 
 # TODO I guess this should be a delimited list (by '::') of name and angle brackets
-nonfundamental_input_type = Combine(Word(alphanums + ':_.') + Opt(angle_bracket_pair + Opt(Word(alphanums + ':_.'))))
+nonfundamental_input_type = Combine(Word(alphanums + ':_.|') + Opt(angle_bracket_pair + Opt(Word(alphanums + ':_.|'))))
 fundamental_input_type = OneOrMore(Keyword('bool') ^ Keyword('short') ^ Keyword('int') ^ Keyword('long') ^ Keyword('signed') ^ Keyword('unsigned') ^ Keyword('char') ^ Keyword('float') ^ Keyword('double'))
 input_type = fundamental_input_type ^ nonfundamental_input_type
 

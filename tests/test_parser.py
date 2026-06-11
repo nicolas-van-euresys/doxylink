@@ -155,6 +155,10 @@ python_specific = [
     # a quoted, fully-qualified generic annotation
     ('my_method_with_qualified_args(self, "typing.List[str]" items)',
         ('my_method_with_qualified_args', '(self, "typing.List[str]")')),
+    # usage of '|' in types
+    ('my_method_with_union_args(self, my_package.MyClass|None source, my_package.OtherClass region)',
+        ('my_method_with_union_args', '(self, my_package.MyClass|None, my_package.OtherClass)')),
+    ('my_func_with_union(MyType|None value)', ('my_func_with_union', '(MyType|None)')),
 ]
 
 
