@@ -1,6 +1,6 @@
 INPUT                  = src
 RECURSIVE              = YES
-FILE_PATTERNS          = *.h
+FILE_PATTERNS          = *.h,*.cs,*.py
 EXTRACT_ALL            = YES
 GENERATE_TAGFILE       = my_lib.tag
 GENERATE_LATEX         = NO
