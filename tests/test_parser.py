@@ -132,6 +132,24 @@ keywords_almost_in_typenames = [
     ('evolve(quantumdata::StateVector &, const structure::QuantumSystem &, const evolution::Pars &)', ('evolve', '(quantumdata::StateVector&, const structure::QuantumSystem&, const evolution::Pars&)')),
 ]
 
+csharp_specific = [
+    # fully-qualified type names keep their dots
+    ('MyMethod(System.String foo)', ('MyMethod', '(System.String)')),
+    ('MyMethod(System.String a, System.Int32 b)', ('MyMethod', '(System.String, System.Int32)')),
+    ('Process(System.Collections.Generic.List< System.String > items)',
+        ('Process', '(System.Collections.Generic.List< System.String >)')),
+]
+
+python_specific = [
+    # untyped positional, keyword, *args and **kwargs
+    ('my_func_with_args(a, b=3, *args, **kwargs)', ('my_func_with_args', '(a, b, *args, **kwargs)')),
+    # typed args (already reordered to C++ order by Doxygen)
+    ('my_method_with_args(self, str name, int count)', ('my_method_with_args', '(self, str, int)')),
+    # a quoted, fully-qualified generic annotation
+    ('my_method_with_qualified_args(self, "typing.List[str]" items)',
+        ('my_method_with_qualified_args', '(self, "typing.List[str]")')),
+]
+
 
 @pytest.mark.parametrize('test_input, expected', functions)
 def test_split_function(test_input, expected):
@@ -175,6 +193,16 @@ def test_multiple_namespaces(test_input, expected):
 
 @pytest.mark.parametrize('test_input, expected', keywords_almost_in_typenames)
 def test_keywords_almost_in_typenames(test_input, expected):
+    assert parsing.normalise(test_input) == expected
+
+
+@pytest.mark.parametrize('test_input, expected', csharp_specific)
+def test_csharp(test_input, expected):
+    assert parsing.normalise(test_input) == expected
+
+
+@pytest.mark.parametrize('test_input, expected', python_specific)
+def test__python(test_input, expected):
     assert parsing.normalise(test_input) == expected
 
 
