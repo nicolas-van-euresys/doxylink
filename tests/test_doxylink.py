@@ -28,7 +28,9 @@ def examples_tag_file():
         raise RuntimeError('Could not find FILE_PATTERNS or GENERATE_TAGFILE in Doxyfile')
     matches = []
     for extension in extensions:
-        m = glob.glob(os.path.join(basedir, extension))
+        # Sources may live in a subdirectory of ``examples`` (e.g. ``examples/src``),
+        # so search recursively rather than only at the top level.
+        m = glob.glob(os.path.join(basedir, '**', extension), recursive=True)
         matches.extend(m)
 
     if not os.path.isfile(tagfile):
