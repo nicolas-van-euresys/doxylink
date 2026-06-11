@@ -7,8 +7,8 @@ from pyparsing import Word, Literal, nums, alphanums, OneOrMore, Opt, \
 # define punctuation - reuse of expressions helps packratting work better
 LPAR, RPAR, LBRACK, RBRACK, LCBRACK, RCBRACK, COMMA, EQ = map(Literal, "()[]{},=")
 
-# Qualifier to go in front of type in the argument list (unsigned const int foo)
-qualifier_grouped = OneOrMore(Keyword('const') ^ Keyword('volatile') ^ Keyword('typename') ^ Keyword('struct') ^ Keyword('enum'))
+# Qualifier to go in front of type in the argument list (unsigned const int foo).
+qualifier_grouped = OneOrMore(Keyword('const') ^ Keyword('volatile') ^ Keyword('typename') ^ Keyword('struct') ^ Keyword('enum') ^ Keyword('ref') ^ Keyword('out') ^ Keyword('in'))
 qualifier = ungroup(qualifier_grouped.addParseAction(' '.join))
 
 

@@ -138,9 +138,16 @@ csharp_specific = [
     ('MyMethod(System.String a, System.Int32 b)', ('MyMethod', '(System.String, System.Int32)')),
     ('Process(System.Collections.Generic.List< System.String > items)',
         ('Process', '(System.Collections.Generic.List< System.String >)')),
+    # parameter-passing modifiers ref/out/in are kept in front of the type
+    ('MyMethod(ref MyClass byRef)',
+        ('MyMethod', '(ref MyClass)')),
+    ('MyMethod(out MyClass result)', ('MyMethod', '(out MyClass)')),
+    ('MyMethod(in MyClass value)', ('MyMethod', '(in MyClass)')),
 ]
 
 python_specific = [
+    # fully-qualified type names keep their dots
+    ('my_method(my_package.MyClass foo)', ('my_method', '(my_package.MyClass)')),
     # untyped positional, keyword, *args and **kwargs
     ('my_func_with_args(a, b=3, *args, **kwargs)', ('my_func_with_args', '(a, b, *args, **kwargs)')),
     # typed args (already reordered to C++ order by Doxygen)
