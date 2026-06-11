@@ -12,6 +12,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Adds support for C# and Python languages.
+
+### Changed
+
+- Alter separators handling to consider `::` and `.` as equivalent. As example, it is possible to refer to a C++ type
+    with `MyNamespace.MyType` or to a Python type with `my_module::MyType`. This change was made to match Doxygen's
+    own reference resolution algorithm while simplifying the implementation.
+
 ## [1.13.0] - 2025-02-28
 
 ### Added
