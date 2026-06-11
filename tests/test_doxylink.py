@@ -112,23 +112,32 @@ def test_parse_tag_file(examples_tag_file):
 @pytest.mark.parametrize('symbol, expected_matches', [
     ('my_namespace', {'my_namespace'}),
     ('my_namespace::MyClass', {'my_namespace::MyClass'}),
+    ('my_namespace.MyClass', {'my_namespace::MyClass'}),
     ('MyClass', {'my_namespace::MyClass', 'my_namespace::MyClass::MyClass', 'MyClass', 'MyClass::MyClass',
                  'MyCompany::MyApp::MyClass', 'MyCompany::MyApp::MyClass::MyClass',
                  'MyCompany::OtherApp::MyClass', 'MyCompany::OtherApp::MyClass::MyClass',
                  'mypackage::my_module::MyClass'}),
     ('my_lib.h::MY_MACRO', {'my_lib.h::MY_MACRO'}),
+    ('my_lib.h.MY_MACRO', {'my_lib.h::MY_MACRO'}),
     ('MY_MACRO', {'my_lib.h::MY_MACRO'}),
     ('my_namespace::MyClass::my_method', {'my_namespace::MyClass::my_method'}),
+    ('my_namespace.MyClass.my_method', {'my_namespace::MyClass::my_method'}),
     ('MyClass::my_method', {'my_namespace::MyClass::my_method', 'mypackage::my_module::MyClass::my_method'}),
+    ('MyClass.my_method', {'my_namespace::MyClass::my_method', 'mypackage::my_module::MyClass::my_method'}),
     ('ClassesGroup', {'ClassesGroup'}),
     ('lassesGroup', set()),
     ('yClass::my_method', set()),
+    ('yClass.my_method', set()),
+    ('MyCompany::MyApp::MyClass', {'MyCompany::MyApp::MyClass'}),
+    ('MyCompany.MyApp.MyClass', {'MyCompany::MyApp::MyClass'}),
+    ('mypackage::my_module::MyClass', {'mypackage::my_module::MyClass'}),
+    ('mypackage.my_module.MyClass', {'mypackage::my_module::MyClass'}),
 ])
 def test_find_url_piecewise(examples_tag_file, symbol, expected_matches):
     tag_file = ET.parse(examples_tag_file)
     mapping = doxylink.SymbolMap(tag_file)
 
-    matches = mapping._find_entries(symbol, None, None)
+    matches = mapping._find_entries(doxylink.canonicalise_separators(symbol), None, None)
     matched_names = {entry.name for entry in matches}
 
     assert expected_matches == matched_names
