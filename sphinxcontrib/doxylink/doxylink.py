@@ -169,12 +169,12 @@ class SymbolMap:
         Finds all potentially matching entries in the symbol list.
 
         Args:
-            name (str): the name symbol to search for
+            canonical_name (str): the name symbol to search for in canonical form (see :func:`canonicalise_separators`)
             kind (Optional[str]): the kind of symbols to search for
             arglist (str): normalised function argument list
 
         Returns:
-            list[Entry]: all entries whose name ends with 'name'
+            list[Entry]: all entries whose name ends with 'canonical_name'
         '''
 
         matches = []
@@ -200,7 +200,7 @@ class SymbolMap:
         candidates are expected to be valid.
 
         Args:
-            name (str): symbol name
+            canonical_name (str): symbol name in canonical form (see :func:`canonicalise_separators`)
             candidates (list[Entry]): list of candidates to choose from
 
         Returns:
@@ -208,7 +208,7 @@ class SymbolMap:
         '''
 
         if not candidates:
-            raise LookupError(f'No documentation entry matching "{name}"')
+            raise LookupError(f'No documentation entry matching "{canonical_name}"')
 
         # An exact match would appear at the beginning of the list.
         if len(candidates) == 1 or candidates[0].canonical_name == canonical_name:
