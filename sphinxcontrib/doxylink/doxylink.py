@@ -33,6 +33,14 @@ def canonicalise_separators(name: str) -> str:
     
     Please note that collapsing in this direction (rather than `.` -> `::`) keeps real
     dots that are part of a name working (example: the filename in `my_lib.h::MY_MACRO`).
+
+    Known tradeoff: because `::` and `.` become interchangeable, a namespace/member
+    symbol such as ``my_lib::h`` canonicalises to the same string as an unrelated
+    *file* named ``my_lib.h``. :meth:`SymbolMap._disambiguate` may then pick either one
+    (see ``test_file_name_collides_with_canonicalised_member``). This could be resolved
+    by using the original (pre-canonicalisation) spelling together with each
+    candidate's `kind`, but doing so would slow down resolution and make code more complex
+    to handle rare cases.
     '''
     return name.replace('::', '.')
 
@@ -292,6 +300,15 @@ def parse_tag_file(doc: ET.ElementTree, parse_error_ignore_regexes: Optional[Lis
         if compound_kind in ('file', 'page') and not os.path.splitext(compound_filename)[1]:
             compound_filename = compound_filename + '.html'
 
+        # For files, Doxygen records the containing directory in <path>. Prefixing it onto the
+        # name (using '/', which can't appear in a C++ symbol) lets users disambiguate identically
+        # named files in different directories, e.g. `src/hal/adc.c` as well as plain `adc.c`,
+        # while reusing the existing suffix-matching in Entry.matches() -- no new syntax needed.
+        if compound_kind == 'file':
+            compound_path = compound.findtext('path')
+            if compound_path:
+                compound_name = '/'.join([compound_path.rstrip('/\\'), compound_name])
+
         # If it's a compound we can simply add it
         entries.append(Entry(compound_name, kind=compound_kind, file=compound_filename, arglist=None))
 
@@ -437,7 +454,7 @@ def create_role(app, tag_filename, rootdir, cache_name, pdf=""):
         if url.kind == 'function' and app.config.add_function_parentheses and normalise(title)[1] == '' and not has_explicit_title:
             title = join(title, '()')
 
-        pnode = nodes.reference(title, title, internal=False, refuri=full_url)
+        pnode = nodes.reference(title, title, internal=False, refuri=full_url, classes=['doxylink'])
         return [pnode], []
 
     return find_doxygen_link

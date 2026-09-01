@@ -130,6 +130,12 @@ multiple_namespaces = [
 
 keywords_almost_in_typenames = [
     ('evolve(quantumdata::StateVector &, const structure::QuantumSystem &, const evolution::Pars &)', ('evolve', '(quantumdata::StateVector&, const structure::QuantumSystem&, const evolution::Pars&)')),
+    # C++ arguments whose *name* happens to collide with the C#-only 'ref'/'out'/'in'
+    # parameter modifiers (see `csharp_specific` below). Those modifiers are only valid
+    # in front of the type, so an argument name in this (trailing) position must still
+    # be parsed as a plain identifier, not mistaken for a modifier.
+    ('encode(int in, int out)', ('encode', '(int, int)')),
+    ('write(Buffer ref)', ('write', '(Buffer)')),
 ]
 
 csharp_specific = [
@@ -159,6 +165,16 @@ python_specific = [
     ('my_method_with_union_args(self, my_package.MyClass|None source, my_package.OtherClass region)',
         ('my_method_with_union_args', '(self, my_package.MyClass|None, my_package.OtherClass)')),
     ('my_func_with_union(MyType|None value)', ('my_func_with_union', '(MyType|None)')),
+]
+
+attributes = [
+    ('([[maybe_unused]] int foo)', ('', '(int)')),
+    ('(int a, [[maybe_unused]] int b)', ('', '(int, int)')),
+    ('([[deprecated("use bar instead")]] const int &foo)', ('', '(const int&)')),
+]
+
+default_brace_init = [
+    ('(const Name &name={}, int lifetime=5)', ('', '(const Name&, int)')),
 ]
 
 
@@ -214,6 +230,16 @@ def test_csharp(test_input, expected):
 
 @pytest.mark.parametrize('test_input, expected', python_specific)
 def test__python(test_input, expected):
+    assert parsing.normalise(test_input) == expected
+
+
+@pytest.mark.parametrize('test_input, expected', attributes)
+def test_attributes(test_input, expected):
+    assert parsing.normalise(test_input) == expected
+
+
+@pytest.mark.parametrize('test_input, expected', default_brace_init)
+def test_default_brace_init(test_input, expected):
     assert parsing.normalise(test_input) == expected
 
 
