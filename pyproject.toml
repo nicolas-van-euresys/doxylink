@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: BSD
 
 [tool.poetry]
-name = "sphinxcontrib-doxylink"
+name = "sphinxcontrib-doxylink-euresys"
 packages = [{include = "sphinxcontrib"}]
 version = "1.14.dev1"
 description = "Sphinx extension for linking to Doxygen documentation."
